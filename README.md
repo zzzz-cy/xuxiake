@@ -22,7 +22,7 @@ npm run build
 
 2.完成修改
 
-3.在项目文件夹中选择 Git Bash Here
+3.在项目文件夹中点击鼠标右键选择 Git Bash Here
 
 4.按顺序执行以下命令
 
