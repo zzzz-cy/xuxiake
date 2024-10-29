@@ -16,3 +16,14 @@ npm run serve
 ```
 npm run build
 ```
+
+### 内部修改教学
+1.git clone项目到本地
+2.完成修改
+3.在项目文件夹中选择 Git Bash Here
+4.按顺序执行以下命令
+```
+git add *
+git commit  -m  "对你更新文件的简单注释，比如：修改字体"
+git push
+```
