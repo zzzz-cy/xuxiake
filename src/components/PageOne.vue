@@ -15,7 +15,9 @@
     <!-- 中间章节容器 -->
     <div class="page-content">
       <!-- 矢量容器 -->
-      <div ref="mapContainer" class="map-container"></div>
+      <div ref="mapContainer" class="map-container">
+        <img src="/images/south_china_sea.jpg" alt="南海" class="south-china-sea-image" />
+      </div>
     </div>
     <!-- 右侧故事容器 -->   
     <div class="story-content">
@@ -40,6 +42,9 @@ export default {
   name: "PageOne",
   data() {
     return {
+      timelineY: 0,
+      timelineX: 0,
+
       svg: null,        // SVG 对象
       projection: null, // 存储地图投影对象
 
@@ -59,15 +64,42 @@ export default {
     };
   },
   async mounted() {
-    await Promise.all([
-      this.loadChapters(), // 异步加载章节数据
-      this.loadLocationData(), // 异步加载地点数据
-      this.loadTimeData(),// 异步加载时间数据
-    ]);
-    this.initMap();
+    // 首次加载时
+    await this.initOnResize();
+    // 监听窗口大小变化
+    window.addEventListener('resize', this.initOnResize);
+  },
+  beforeUnmount() {
+    // 移除监听，避免内存泄漏
+    window.removeEventListener('resize', this.initOnResize);
   },
   methods: {
-    // 加载章节名
+
+    async initOnResize() {
+      this.resetData();
+      // 等待异步数据加载
+      await Promise.all([
+        this.loadChapters(),  // 异步加载章节数据
+        this.loadLocationData(),  // 异步加载地点数据
+        this.loadTimeData(),  // 异步加载时间数据
+      ]);
+      this.initMap();  // 初始化地图
+    },
+    resetData() {
+      this.timelineY = 0;
+      this.timelineX = 0;
+      const container = this.$refs.mapContainer; // 获取地图容器
+      // // 清空所有图像
+      // const images = container.querySelectorAll('img');
+      // images.forEach(img => img.remove());  // 移除所有图像
+
+      // 清空所有 SVG 元素
+      const svgs = container.querySelectorAll('svg');
+      svgs.forEach(svg => svg.remove());  // 移除所有 SVG 元素
+      this.svg = null;        // SVG 对象
+      this.projection = null; // 地图投影对象
+    },
+       // 加载章节名
     async loadChapters() {
       try {
         const response = await fetch("/data/chapters.json"); // JSON 文件路径
@@ -189,6 +221,12 @@ export default {
     },
     // 在选择章节时关联地图上的点和时间标尺
     async relate() {
+      // const container = this.$refs.mapContainer;
+      // const width = container.clientWidth;
+      // const height = container.clientHeight;
+      // const centerX = width / 2;
+      
+
       const svg = d3.select(this.$refs.mapContainer).select("svg");  // 选择地图的 svg 容器
       svg.selectAll("circle").remove();  // 清除之前绘制的地点圆圈
       svg.selectAll(".location-line").remove();
@@ -199,9 +237,13 @@ export default {
       
       // 获取时间标尺容器的 g 元素
       const timelineGroup = svg.select(".timeline-group");
-      
-      const timelineWidth = svg.node().getBoundingClientRect().width;
+    
+      // const timelineWidth = svg.node().getBoundingClientRect().width;
+      const timelineWidth = this.timelineX;
       const timelineHeight = 60;  // 时间标尺的高度
+
+      const centerY = this.timelineY;
+
       // 1. 清除之前的时间连接线和时间点
       svg.selectAll(".timeline-link").remove();
       svg.selectAll(".location-circle").remove();  // 清除之前绘制的地点圆圈
@@ -242,7 +284,7 @@ export default {
       const axisBottom = d3.axisBottom(xScale).ticks(interval).tickFormat(d3.timeFormat("%Y-%m"));
       timelineGroup.append("g")
           .attr("class", "timeline-axis")
-          .attr("transform", `translate(0, ${620 + timelineHeight / 2})`)
+          .attr("transform", `translate(0, ${centerY + timelineHeight / 2})`)
           .call(axisBottom)
           .selectAll(".tick line") // 修改刻度线的颜色
           .attr("y1", -30)
@@ -265,7 +307,7 @@ export default {
           const offsetX = i * 5;  // 根据索引为点添加水平偏移（你可以调整这个值）
           return baseX + offsetX; // 添加偏移后的X坐标
         })
-        .attr("cy", 620 + timelineHeight / 2) // 在时间标尺中居中显示
+        .attr("cy", centerY + timelineHeight / 2) // 在时间标尺中居中显示
         .attr("r", 6)
         .attr("fill", "#FF0000")
         .style("opacity", 0.7);      
@@ -280,7 +322,7 @@ export default {
           const offsetX = i * 5;  // 根据索引为点添加水平偏移
           return baseX + offsetX;
         })
-        .attr("y", 640 + timelineHeight / 2) // 文字位置稍微在点的下方
+        .attr("y", centerY + 20 + timelineHeight / 2) // 文字位置稍微在点的下方
         .attr("dy", -30) // 微调文字的垂直位置
         .attr("text-anchor", "middle") // 文字居中显示
         .text(d => new Date(d.time).toLocaleDateString()) // 格式化时间为日期
@@ -291,7 +333,7 @@ export default {
       svg.append("text")
         .attr("class", "axis-label")
         .attr("x", (timelineWidth *0.95))  // 将文本放置在画布的中心
-        .attr("y", 650 + timelineHeight / 2) // 放置在时间轴下方
+        .attr("y", centerY + 30 + timelineHeight / 2) // 放置在时间轴下方
         .attr("text-anchor", "middle")
         .text("时间轴")  // 设置坐标轴的名称
         .style("font-size", "16px")
@@ -313,7 +355,7 @@ export default {
             const offsetY = 0;  // 可以根据需要在y方向上加偏移，调整终点的y位置
 
             // 定义曲线的起点和终点以及控制点
-            const start = [xScale(new Date(d.time)) + offsetX, 620 + timelineHeight / 2 + offsetY];  // 时间点的x坐标和y坐标
+            const start = [xScale(new Date(d.time)) + offsetX, centerY + timelineHeight / 2 + offsetY];  // 时间点的x坐标和y坐标
             
 
             // 地点的x坐标和y坐标，添加偏移量
@@ -350,7 +392,7 @@ export default {
           return baseX + offsetX - rectWidth / 2; // 确保矩形居中
         })
         .attr("y", (d, i) => {
-          const baseY = 750; // 根据时间绘制位置
+          const baseY = centerY + 130; // 根据时间绘制位置
           const offsetY = (-1)**i * 60;  // 根据索引为每个矩形添加垂直偏移
           return baseY + offsetY;  // 确保矩形有足够的垂直间距
         })
@@ -394,14 +436,14 @@ export default {
           const offsetX = i * 5;  // 水平偏移
           return baseX + offsetX;
         })
-        .attr("y1", 620 + timelineHeight / 2) // 时间点y坐标
+        .attr("y1", centerY + timelineHeight / 2) // 时间点y坐标
         .attr("x2", (d, i) => {
           const baseX = xScale(new Date(d.time)); // 时间点x坐标
           const offsetX = i * 5;  // 水平偏移
           return baseX + offsetX;
         })
         .attr("y2", (d, i) => {
-          const baseY = 750; // 根据时间绘制位置
+          const baseY = centerY+ 130; // 根据时间绘制位置
           const offsetY = (-1)**i * 60;  // 根据索引为每个矩形添加垂直偏移
           return baseY + offsetY;  // 确保矩形有足够的垂直间距
         })
@@ -421,7 +463,7 @@ export default {
           return baseX + offsetX;
         })
         .attr("y", (d, i) => {
-          const baseY = 770; // 根据时间绘制位置
+          const baseY = centerY + 150; // 根据时间绘制位置
           const offsetY = (-1)**i * 60;  // 根据索引为每个矩形添加垂直偏移
           return baseY + offsetY;  // 确保矩形有足够的垂直间距
         })
@@ -481,33 +523,36 @@ export default {
       });
     },
     async initMap() {
-      // 地图容器宽高
-      const width = 1200; // 放大宽度
-      const height = 900; // 放大高度
-
-      // 定义地图投影
-      this.projection = d3.geoMercator()
-        .center([107, 31]) // 地图中心位置
-        .scale(750) // 设置缩放量
-        .translate([width / 2, height / 2 - 30]); // 设置平移量
-
-      // 创建 SVG
-      this.svg = d3
-          .select(this.$refs.mapContainer)
-          .append("svg")
-          .attr("width", width)
-          .attr("height", height);
-
       try {
-        // 调用绘制地图路径函数
+        // // 清除所有容器内的图像和矢量图形（SVG）
+        // const images = container.querySelectorAll('img');
+        // images.forEach(img => img.remove());  // 移除所有图像
+
+        // const svgs = container.querySelectorAll('svg');
+        // svgs.forEach(svg => svg.remove());  // 移除所有 SVG 元素
+        // 获取 `mapContainer` 的 DOM 元素
+        const container = this.$refs.mapContainer;
+
+        // 定义地图投影
+        this.projection = d3.geoMercator()
+          .center([107, 20]) // 地图中心位置
+          .scale(400) // 设置缩放量
+          .translate([container.clientWidth / 2, container.clientHeight / 2]);
+
+        // 创建 SVG，宽高使用 CSS 控制
+        this.svg = d3
+          .select(container)
+          .append("svg")
+          .attr("preserveAspectRatio", "xMidYMid meet") // 保持宽高比
+          .attr("viewBox", `0 0 ${container.clientWidth} ${container.clientHeight}`);
+
+        // 绘制地图路径、地点圆圈、连接线等
         await this.drawMapPath(this.svg, this.projection);
-        // 调用绘制地点圆圈函数
         await this.drawLocationCircles(this.svg, this.projection, this.locations);
-        // 调用绘制连接线函数
         await this.drawLocationLines(this.svg, this.projection, this.locations);
 
-        // 创建时间标尺，并放置在地图下方
-        this.initTimeline(this.svg, 600); // 添加到地图的 SVG 中
+        // 初始化时间标尺
+        this.initTimeline(this.svg, container.clientHeight / 2); // 调整时间标尺的位置
       } catch (error) {
         console.error("地图数据加载失败:", error);
       }
@@ -525,7 +570,8 @@ export default {
 
       // 设置时间标尺的 y 坐标，使其位于地图下方
       const timelineYPosition = mapHeight + 20; // 调整时间标尺的位置，放置在地图下方
-
+      this.timelineY = timelineYPosition; // 时间轴的 y 坐标
+      this.timelineX = timelineWidth;
       // 创建一个时间轴的比例尺
       const xScale = d3.scaleTime()
         .domain([d3.min(this.timeData, d => new Date(d.time)),
@@ -619,23 +665,25 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;  /* 内容从左侧开始 */
-  width: 100%;
-  height: calc(100vh - 43px); 
+  padding-top: 50px; /* 给顶部导航栏留空间 */
+  padding-bottom: 0px;
+  width: 100vw;
+  height: calc(100vh - padding-top - padding-bottom); /* 减去顶部和底部 padding */
   overflow: hidden;
-  margin-top: 43px;
-  margin-bottom: 2px;
    /* 根据需要调整此值，避免与导航栏重叠 */
-  
 }
 .chapter-list {
   display: flex;
   flex-direction: column;
-  width: 250px;
-  height: 98%;
+  width: 20%; /* 动态调整宽度 */
+  max-width: 250px; /* 最大宽度限制 */
+  min-width: 150px; /* 最小宽度限制 */
+  padding-top: 15px;
+  padding-bottom: 15px;
+  height: calc(100% - padding-top - padding-bottom);
   overflow-y: auto;
   background-color: #ffadad;
   border-right: 1px solid #ddd;
-  padding: 15px 0px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   flex-shrink: 0; /* 防止缩小 */
 }
@@ -657,49 +705,71 @@ export default {
   background-color: #00796b;
   color: #ffffff;
 }
-
-.page-content {
-  flex-direction: column;  /* 子容器上下排列 */
-  flex-grow: 1; /* 填充剩余空间 */
-  width: auto;  /* 不设置固定宽度 */
-  height: 100%;            /* 父容器占满可用空间 */
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  background-color: #8918cf4a;
-}
-.map-container {
-  margin: 0;
-  width: 100%; /* 使用百分比宽度适配父容器 */
-  height: 100%; /* 使用百分比高度适配父容器 */
-  overflow: hidden; /* 隐藏超出的部分 */
-  background-color: #41db3c4a;
-  z-index: 2;
-}
 .story-content{
   flex-direction: column;  /* 子容器上下排列 */
-  width: 350px;
+  width: calc(30% - padding-right - padding-left);
+  max-width: 340px; /* 最大宽度限制 */
+  min-width: 250px; /* 最小宽度限制 */
   flex-shrink: 0; /* 防止缩小 */
-  height: 100%; 
-  padding-right:40px; 
-  padding: 45px 40px 45px 45px; /* 上、右、下、左的内边距 */
+  padding-right: 40px; 
+  padding-top: 40px;
+  padding-bottom: 40px;
+  padding-left: 45px;
+  height: calc(100% - padding-top - padding-bottom);
   display: flex;
-  justify-content: flex-start;
+  justify-content: center; /* 垂直方向居中 */
   align-items: center;
-  background-color: #3cbedb7a;
+  background-color: #3cdb9b7a;
 }
-
+.page-content {
+  flex-grow: 1; /* 填充剩余空间 */
+  width: 50%;  /* 不设置固定宽度 */
+  height: 100%;            /* 父容器占满可用空间 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #8918cf4a;
+  flex-shrink: 0; /* 防止缩小 */
+}
+.map-container {
+  position: relative; /* 保证子元素可以相对定位 */
+  margin: 0;
+  width: 100%; /* 使用百分比宽度适配父容器 */
+  
+  height: 100%; /* 使用百分比高度适配父容器 */
+  display: flex; /* 使用 flex 布局 */
+  justify-content: center; /* 水平方向居中 */
+  align-items: center; /* 垂直方向顶部对齐 */
+  overflow: hidden; /* 隐藏超出的部分 */
+  background-color: #3cb1db4a;
+  z-index: auto;
+  flex-shrink: 0; /* 防止缩小 */
+}
+.map-container svg {
+  width: 90%; /* 宽度占比 */
+  height: 100%; /* 高度占比 */
+}
+.south-china-sea-image {
+  position: absolute;
+  top: 46%; /* 调整位置 */
+  left: 70%;
+  transform: translate(-50%, -50%); /* 居中 */
+  width: 5%; /* 调整图片大小 */
+  max-width: 10vw; /* 根据屏幕宽度限制图片大小 */
+  max-height: 15vw; /* 根据屏幕高度限制图片大小 */
+  height: auto; /* 保持图片比例 */
+  z-index: 100; /* 根据需要调整叠加次序 */
+}
 .top-content {
   width: 100%;
-  height: 45%;
+  height: 50%;
   background-color: #f9f9f9;
   margin-bottom: 15px; /* 为了分隔上下内容 */
   overflow-y: auto;  /* 允许内容滚动 */
 }
-
 .bottom-content {
   width: 100%;
-  height: 45%;
+  height: 50%;
   background-color: #f0f0f0;
   overflow-y: auto;  /* 允许内容滚动 */
 }
