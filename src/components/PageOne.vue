@@ -311,13 +311,15 @@ export default {
         .attr("class", "timeline-point")
         .attr("cx", (d, i) => {
           const baseX = xScale(new Date(d.time)); // 根据时间绘制位置
-          const offsetX = i * 5;  // 根据索引为点添加水平偏移（你可以调整这个值）
+          const offsetX = i * 0;  // 根据索引为点添加水平偏移（你可以调整这个值）
           return baseX + offsetX; // 添加偏移后的X坐标
         })
         .attr("cy", centerY + timelineHeight / 2) // 在时间标尺中居中显示
         .attr("r", 6)
         .attr("fill", "#b7ae8f")
-        .style("opacity", 0.7);      
+        .style("opacity", 0.7);   
+        
+      const mini = 40; // 设置最小距离
       // 2. 绘制时间文本
       timelineGroup.selectAll(".timeline-text")
         .data(this.selectedTimeData)
@@ -326,13 +328,34 @@ export default {
         .attr("class", "timeline-text")
         .attr("x", (d, i) => {
           const baseX = xScale(new Date(d.time)); // 根据时间绘制位置
-          const offsetX = i * 5;  // 根据索引为点添加水平偏移
+          const offsetX = i * 0;  // 根据索引为点添加水平偏移
           return baseX + offsetX;
         })
         .attr("y", centerY + 20 + timelineHeight / 2) // 文字位置稍微在点的下方
         .attr("dy", -30) // 微调文字的垂直位置
         .attr("text-anchor", "middle") // 文字居中显示
-        .text(d => new Date(d.time).toLocaleDateString()) // 格式化时间为日期
+        .text((d, i, nodes) => {
+          const currentX = xScale(new Date(d.time)); // 当前点的x坐标
+          const leftX = i > 0 ? xScale(new Date(this.selectedTimeData[i - 1].time)) : -Infinity;
+          const rightX = i < this.selectedTimeData.length - 1 ? xScale(new Date(this.selectedTimeData[i + 1].time)) : Infinity;
+          // 返回只包含“日月”的格式
+          const date = new Date(d.time);
+          const options = { month: '2-digit', day: '2-digit' }; // 格式为 MM/DD
+
+          if(i===0 || i===this.selectedTimeData.length-1){
+              return new Intl.DateTimeFormat('en-US', options).format(date); // 或 'en-US' 等
+            }
+          // 如果与左右点的距离都小于 mini，不显示文字:&& Math.abs(currentX - rightX) < mini
+          if (Math.abs(currentX - leftX) < mini) {
+            nodes[i].remove(); // 移除该元素
+            return null; // 不设置文本
+          }
+          if(i===this.selectedTimeData.length-2 && Math.abs(currentX - rightX) < mini){
+            nodes[i].remove(); // 移除该元素
+            return null; // 不设置文本
+          }
+          return new Intl.DateTimeFormat('en-US', options).format(date); // 或 'en-US' 等
+        })
         .style("font-size", "15px")
         .style("font-weight", "bold") // 加粗字体
         .style("fill", "#000000");
@@ -359,7 +382,7 @@ export default {
           .attr("class", "timeline-link")
           .attr("d", (d, i) => {
             // 为终点添加偏移量，避免重叠
-            const offsetX = i * 5;  // 可以根据索引调整偏移量（例如 5px）
+            const offsetX = i * 0;  // 可以根据索引调整偏移量（例如 5px）
             const offsetY = 0;  // 可以根据需要在y方向上加偏移，调整终点的y位置
 
             // 定义曲线的起点和终点以及控制点
@@ -388,7 +411,7 @@ export default {
       // 绘制每个时间点下方的圆角矩形
       const rectWidth = 35;  // 设置矩形宽度
       const rectHeight = 90; // 设置矩形高度
-
+      const offsets = [-73, 98, 12]; // 定义一个数组，存储偏移值
       lineGroup.selectAll(".timeline-rect")
         .data(this.selectedTimeData)
         .enter()
@@ -396,12 +419,12 @@ export default {
         .attr("class", "timeline-rect")
         .attr("x", (d, i) => {
           const baseX = xScale(new Date(d.time)); // 根据时间绘制位置
-          const offsetX = i * 5;  // 根据索引为点添加水平偏移
+          const offsetX = i * 0;  // 根据索引为点添加水平偏移
           return baseX + offsetX - rectWidth / 2; // 确保矩形居中
         })
         .attr("y", (d, i) => {
           const baseY = centerY + 130; // 根据时间绘制位置
-          const offsetY = (-1)**i * 60;  // 根据索引为每个矩形添加垂直偏移
+          const offsetY = offsets[i % 3];  // 根据索引为每个矩形添加垂直偏移
           return baseY + offsetY;  // 确保矩形有足够的垂直间距
         })
         .attr("width", rectWidth)
@@ -444,18 +467,18 @@ export default {
         .attr("class", "timeline-line")
         .attr("x1", (d, i) => {
           const baseX = xScale(new Date(d.time)); // 时间点x坐标
-          const offsetX = i * 5;  // 水平偏移
+          const offsetX = i * 0;  // 水平偏移
           return baseX + offsetX;
         })
         .attr("y1", centerY + timelineHeight / 2) // 时间点y坐标
         .attr("x2", (d, i) => {
           const baseX = xScale(new Date(d.time)); // 时间点x坐标
-          const offsetX = i * 5;  // 水平偏移
+          const offsetX = i * 0;  // 水平偏移
           return baseX + offsetX;
         })
         .attr("y2", (d, i) => {
           const baseY = centerY+ 130; // 根据时间绘制位置
-          const offsetY = (-1)**i * 60;  // 根据索引为每个矩形添加垂直偏移
+          const offsetY = offsets[i % 3];  // 根据索引为每个矩形添加垂直偏移
           return baseY + offsetY;  // 确保矩形有足够的垂直间距
         })
         .attr("stroke", "#b7ae8f")
@@ -471,12 +494,12 @@ export default {
         .attr("class", "timeline-text")
         .attr("x", (d, i) => {
           const baseX = xScale(new Date(d.time)); // 根据时间绘制位置
-          const offsetX = i * 5;  // 根据索引为点添加水平偏移
+          const offsetX = i * 0;  // 根据索引为点添加水平偏移
           return baseX + offsetX;
         })
         .attr("y", (d, i) => {
           const baseY = centerY + 128; // 根据时间绘制位置
-          const offsetY = (-1)**i * 60;  // 根据索引为每个矩形添加垂直偏移
+          const offsetY = offsets[i % 3];  // 根据索引为每个矩形添加垂直偏移
           return baseY + offsetY;  // 确保矩形有足够的垂直间距
         })
         .attr("text-anchor", "middle")
