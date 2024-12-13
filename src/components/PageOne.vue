@@ -201,9 +201,9 @@ export default {
             .enter()
             .append("path")
             .attr("d", path)
-            .style("fill", "#f9f9f9")
+            .style("fill", "#f9f9f9")//这里是调地图原始的颜色
             .on("mouseover", (event, d) => {
-              d3.select(event.currentTarget).style("fill", "#b7ae8f");
+              d3.select(event.currentTarget).style("fill", "#b7ae8f");//这里是调地图悬停的颜色
               this.createTooltip(svg, d, event);
             })
             .on("mousemove", (event) => {
@@ -211,7 +211,7 @@ export default {
               this.createTooltip(svg, null, event);
             })
             .on("mouseout", (event) => {
-              d3.select(event.currentTarget).style("fill", "#f9f9f9");
+              d3.select(event.currentTarget).style("fill", "#f9f9f9");//这里是调地图悬停后恢复的颜色
               this.removeTooltip();
             });
 
@@ -290,13 +290,13 @@ export default {
         .selectAll(".tick text") // 选择刻度文本
         .style("font-size", "15px") // 调大字体
         .style("font-weight", "bold") // 加粗字体
-        .style("fill", "#000000"); // 设置字体颜色
+        .style("fill", "#000000"); //这里是调时间刻度文本的颜色
 
       // 修改刻度线的样式
       timelineGroup.selectAll(".tick line") // 修改刻度线的颜色
         .attr("y1", -30)
         .attr("y2", timelineHeight - 30)
-        .style("stroke", "#b7ae8f") // 红色
+        .style("stroke", "#b7ae8f") // 这里是调时间刻度条的颜色
         .style("stroke-width", "1"); // 调整线宽
 
       // 隐藏横轴线 (即 path 元素)
@@ -316,7 +316,7 @@ export default {
         })
         .attr("cy", centerY + timelineHeight / 2) // 在时间标尺中居中显示
         .attr("r", 6)
-        .attr("fill", "#b7ae8f")
+        .attr("fill", "#b7ae8f")// 这里是调时间轴上圆点的颜色
         .style("opacity", 0.7);   
         
       const mini = 40; // 设置最小距离
@@ -358,7 +358,7 @@ export default {
         })
         .style("font-size", "15px")
         .style("font-weight", "bold") // 加粗字体
-        .style("fill", "#000000");
+        .style("fill", "#000000");// 这里是调时间轴上游访地图地点的时间文本的颜色
 
       // 3. 添加坐标轴名称（时间轴名称）
       svg.append("text")
@@ -368,7 +368,7 @@ export default {
         .attr("text-anchor", "middle")
         .text("时间轴")  // 设置坐标轴的名称
         .style("font-size", "16px")
-        .style("font-weight", "bold");
+        .style("font-weight", "bold");// 这里可以调"时间轴"文本的颜色、大小等
 
       // 4. 绘制时间连接线（从每个地点到时间点）
       const lineGroup = svg.append("g").attr("class", "timeline-link");
@@ -404,7 +404,7 @@ export default {
               // 曲线的起点、控制点和终点
           })
           .attr("fill", "none")
-          .attr("stroke", "#b7ae8f")
+          .attr("stroke", "#b7ae8f")// 时间轴上的点与地图上地点之间的连接曲线
           .attr("stroke-width", 2)
           .style("opacity", 0.5)
           .style("stroke-dasharray", "4,4");  // 添加虚线效果
@@ -431,7 +431,7 @@ export default {
         .attr("height", rectHeight)
         .attr("rx", 8)  // 圆角矩形
         .attr("ry", 8)
-        .attr("fill", "#b7ae8f")
+        .attr("fill", "#b7ae8f")// 圆角矩形的颜色
         .attr("style", "pointer-events: visible")
         .on("click", (event, d) => {  // 使用箭头函数
           console.log(this);  // 确保 this 指向了 rect 元素
@@ -440,13 +440,13 @@ export default {
           this.placeImpoDisplay = placeImpo ? placeImpo : "无";
           this.placeInfoDisplay = placeInfo ? placeInfo : "无";
             // 设置点击后颜色为白色
-          d3.select(event.target).attr("fill", "#f9f9f9");
+          // d3.select(event.target).attr("fill", "#f9f9f9");
         })
         .on("mouseover", function() {
           d3.select(this)  // 选择当前的矩形
             .transition()  // 添加过渡效果
             .duration(300)  // 设置过渡时间为300ms
-            .attr("fill", "#f9f9f9")  // 鼠标经过时改变矩形颜色
+            .attr("fill", "#f9f9f9")  // 鼠标经过时改变圆角矩形颜色
             .attr("cursor", "pointer")  // 改变鼠标光标为手形
             .style("opacity", 0.8);  // 改变透明度
         })
@@ -454,7 +454,7 @@ export default {
           d3.select(this)  // 选择当前的矩形
             .transition()  // 添加过渡效果
             .duration(300)  // 设置过渡时间为300ms
-            .attr("fill", "#b7ae8f")  // 恢复原来的颜色
+            .attr("fill", "#b7ae8f")  // 圆角矩形恢复原来的颜色
             .style("opacity", 1);  // 恢复透明度
         });
 
@@ -481,7 +481,7 @@ export default {
           const offsetY = offsets[i % 3];  // 根据索引为每个矩形添加垂直偏移
           return baseY + offsetY;  // 确保矩形有足够的垂直间距
         })
-        .attr("stroke", "#b7ae8f")
+        .attr("stroke", "#b7ae8f") // 每个矩形和时间点之间的连接线的颜色
         .attr("stroke-width", 2)
         .style("opacity", 0.5);
       // const rectWidth = 30;  // 设置矩形宽度
@@ -504,7 +504,7 @@ export default {
         })
         .attr("text-anchor", "middle")
         .attr("font-size", "12px")
-        .attr("fill", "#000")
+        .attr("fill", "#000")//矩形中添加文本的颜色
         .attr("style", "pointer-events: none")
         .each(function(d) {
           const textElement = d3.select(this);
@@ -576,7 +576,7 @@ export default {
           .attr("r", 2) // 圆圈半径
           .attr("fill", d => {
             // 如果该地点属于当前章节，显示为红色，否则为灰色
-            return locations.includes(d) ? "#b7ae8f" : "#808080";
+            return locations.includes(d) ? "#b7ae8f" : "#808080";//地图上圆点的颜色（如果该地点属于当前章节，显示为红色，否则为灰色）
           }) // 圆圈颜色为红色
           .on("click", (d) => {
             console.log(`Clicked on location: ${d.name}`);
@@ -602,7 +602,7 @@ export default {
               .attr("y1", projection([start.lon, start.lat])[1])
               .attr("x2", projection([end.lon, end.lat])[0])
               .attr("y2", projection([end.lon, end.lat])[1])
-              .attr("stroke", locations.includes(start) && locations.includes(end) ? "#b7ae8f" : "#808080") // 线的颜色
+              .attr("stroke", locations.includes(start) && locations.includes(end) ? "#b7ae8f" : "#808080") //地图上路线的颜色（如果该地点属于当前章节，显示为红色，否则为灰色）
               .attr("stroke-width", 1); // 线的宽度
           }
         }
@@ -676,7 +676,7 @@ export default {
         .data([this.timeData]) // 将所有地点数据作为路径
         .attr("d", line)
         .attr("fill", "none")
-        .attr("stroke", "#b7ae8f")
+        .attr("stroke", "#b7ae8f")//时间标尺的颜色
         .attr("stroke-width", 3)
         .attr("marker-end", "url(#arrow)")  // 为路径添加箭头标记
         .attr("transform", `translate(0, ${timelineYPosition})`); // 设置时间标尺的位置
@@ -693,7 +693,7 @@ export default {
         .attr("x2", d => xScale(d))
         .attr("y1", 0)
         .attr("y2", timelineHeight)
-        .attr("stroke", "#b7ae8f")
+        .attr("stroke", "#b7ae8f")// 设置刻度的颜色
         .attr("stroke-width", 1)
         .attr("transform", `translate(0, ${timelineYPosition})`); // 设置刻度的位置
 
@@ -724,7 +724,7 @@ export default {
         .attr("y", y)
         .attr("width", 100)
         .attr("height", 40)
-        .attr("fill", "#000")
+        .attr("fill", "#000")//省份背景颜色
         .attr("opacity", 0.6);
 
       svg
@@ -734,7 +734,7 @@ export default {
         .attr("y", y + 25)
         .attr("text-anchor", "middle")
         .attr("font-size", "14px")
-        .attr("fill", "#fff")
+        .attr("fill", "#fff")//省份字体颜色
         .text(d ? d.properties.name : "");
     },
     removeTooltip() {
@@ -771,7 +771,7 @@ export default {
   padding-bottom: 15px;
   height: calc(100% - 30px);
   overflow-y: auto;
-  background-color: #e4e0cf;
+  background-color: #e4e0cf;/* 章节列表背景颜色 */
   border-right: 1px solid #ddd;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   flex-shrink: 0; /* 防止缩小 */
@@ -780,19 +780,19 @@ export default {
   padding: 10px;
   margin: 5px 10px 5px 12px;
   border-radius: 8px;
-  background-color: #ffffff;
-  color: #333;
+  background-color: #ffffff;/* 每个章节背景颜色 */
+  color: #333;/* 每个章节字体颜色 */
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
 }
 .chapter-item:hover {
-  background-color: #b7ae8f;
-  color: #ffffff;
+  background-color: #b7ae8f;/* 每个章节悬停背景颜色 */
+  color: #ffffff;/* 每个章节悬停字体颜色 */
 }
 
 .chapter-item.active {
-  background-color: #e4e0cf;
-  color: #ffffff;
+  background-color: #e4e0cf;/* 每个章节点击背景颜色 */
+  color: #ffffff;/* 每个章节点击字体颜色 */
 }
 .story-content{
   flex-direction: column;  /* 子容器上下排列 */
@@ -808,7 +808,7 @@ export default {
   display: flex;
   justify-content: center; /* 垂直方向居中 */
   align-items: center;
-  background-color: #e4e0cf;
+  background-color: #e4e0cf;/* 右侧容器背景颜色 */
 }
 .page-content {
   flex-grow: 1; /* 填充剩余空间 */
@@ -817,7 +817,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #e4e0cf;
+  background-color: #e4e0cf;/* 中间容器背景颜色 */
   flex-shrink: 0; /* 防止缩小 */
 }
 .map-container {
@@ -830,7 +830,7 @@ export default {
   justify-content: center; /* 水平方向居中 */
   align-items: center; /* 垂直方向顶部对齐 */
   overflow: hidden; /* 隐藏超出的部分 */
-  background-color: #e4e0cf;
+  background-color: #e4e0cf;/* 中间容器背景颜色 */
   z-index: auto;
   flex-shrink: 0; /* 防止缩小 */
 }
@@ -852,26 +852,26 @@ export default {
 .top-content {
   width: 100%;
   height: 50%;
-  background-color: #f9f9f9;
+  background-color: #f9f9f9;/* 右侧容器中上面容器的背景颜色 */
   margin-bottom: 15px; /* 为了分隔上下内容 */
   overflow-y: auto;  /* 允许内容滚动 */
 }
 .bottom-content {
   width: 100%;
   height: 50%;
-  background-color: #f9f9f9;
+  background-color: #f9f9f9;/* 右侧容器中下面容器的背景颜色 */
   overflow-y: auto;  /* 允许内容滚动 */
 }
 .inner-content{
   font-size: 20px;
-  color: #333;
+  color: #333;/* 右侧容器的字体颜色 */
   line-height: 2.0;
   margin-bottom: 10px;
   text-indent: 2em;  /* 首段空两格 */
   overflow-y: auto;  /* 超过高度时出现滚动条 */
 }
 .title {
-  font-size: 36px;
+  font-size: 36px;/* 右侧容器的标题字体大小 */
   text-align: center;
   margin: 0 auto;
 }
