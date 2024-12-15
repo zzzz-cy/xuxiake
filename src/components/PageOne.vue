@@ -45,6 +45,7 @@ export default {
       timelineY: 0,
       timelineX: 0,
       len: 4,
+      init:0,
 
       svg: null,        // SVG 对象
       projection: null, // 存储地图投影对象
@@ -89,6 +90,7 @@ export default {
     resetData() {
       this.timelineY = 0;
       this.timelineX = 0;
+      this.init = 0;
       const container = this.$refs.mapContainer; // 获取地图容器
       // // 清空所有图像
       // const images = container.querySelectorAll('img');
@@ -187,6 +189,7 @@ export default {
       this.selectedLocations = this.locations.filter(item => item.chapter === selectedChapter);
       // 筛选出"所属篇目"为选中章节的数据
       this.selectedTimeData = this.timeData.filter(item => item.chapter === selectedChapter);
+      this.init = 1;
       // 关联地点和时间数据
       this.relate();
     },
@@ -201,9 +204,9 @@ export default {
             .enter()
             .append("path")
             .attr("d", path)
-            .style("fill", "#f9f9f9")//这里是调地图原始的颜色
+            .style("fill", "#8bab8d")//这里是调地图原始的颜色（v1:f9f9f9）
             .on("mouseover", (event, d) => {
-              d3.select(event.currentTarget).style("fill", "#b7ae8f");//这里是调地图悬停的颜色
+              d3.select(event.currentTarget).style("fill", "#597b7a");//这里是调地图悬停的颜色(v1:b7ae8f)
               this.createTooltip(svg, d, event);
             })
             .on("mousemove", (event) => {
@@ -211,7 +214,7 @@ export default {
               this.createTooltip(svg, null, event);
             })
             .on("mouseout", (event) => {
-              d3.select(event.currentTarget).style("fill", "#f9f9f9");//这里是调地图悬停后恢复的颜色
+              d3.select(event.currentTarget).style("fill", "#8bab8d");//这里是调地图悬停后恢复的颜色(v1:f9f9f9)
               this.removeTooltip();
             });
 
@@ -404,7 +407,7 @@ export default {
               // 曲线的起点、控制点和终点
           })
           .attr("fill", "none")
-          .attr("stroke", "#b7ae8f")// 时间轴上的点与地图上地点之间的连接曲线
+          .attr("stroke", "#f19c4c")// 时间轴上的点与地图上地点之间的连接曲线(v1:b7ae8f)
           .attr("stroke-width", 2)
           .style("opacity", 0.5)
           .style("stroke-dasharray", "4,4");  // 添加虚线效果
@@ -574,10 +577,11 @@ export default {
           .attr("cx", (d) => projection([d.lon, d.lat])[0]) // 经度和纬度转为坐标
           .attr("cy", (d) => projection([d.lon, d.lat])[1])
           .attr("r", 2) // 圆圈半径
-          .attr("fill", d => {
-            // 如果该地点属于当前章节，显示为红色，否则为灰色
-            return locations.includes(d) ? "#b7ae8f" : "#808080";//地图上圆点的颜色（如果该地点属于当前章节，显示为红色，否则为灰色）
-          }) // 圆圈颜色为红色
+          .attr("fill", d => 
+            this.init === 0 
+              ? "#8f5442" 
+              : (locations.includes(d) ? "#f19c4c" : "#8f5442")
+          )
           .on("click", (d) => {
             console.log(`Clicked on location: ${d.name}`);
           });
@@ -602,7 +606,14 @@ export default {
               .attr("y1", projection([start.lon, start.lat])[1])
               .attr("x2", projection([end.lon, end.lat])[0])
               .attr("y2", projection([end.lon, end.lat])[1])
-              .attr("stroke", locations.includes(start) && locations.includes(end) ? "#b7ae8f" : "#808080") //地图上路线的颜色（如果该地点属于当前章节，显示为红色，否则为灰色）
+              .attr("stroke", () => {
+                if (this.init === 0) {
+                  return "#8f5442"; // 当 this.init 为 0 时，显示红色
+                } else {
+                  // 其他情况，根据地点的关系决定颜色
+                  return locations.includes(start) && locations.includes(end) ? "#f19c4c" : "#8f5442";
+                }
+              }) //地图上路线的颜色（如果该地点属于当前章节，显示为红色，否则为灰色）
               .attr("stroke-width", 1); // 线的宽度
           }
         }
@@ -855,20 +866,25 @@ export default {
   background-color: #f9f9f9;/* 右侧容器中上面容器的背景颜色 */
   margin-bottom: 15px; /* 为了分隔上下内容 */
   overflow-y: auto;  /* 允许内容滚动 */
+  overflow-x: hidden
 }
 .bottom-content {
   width: 100%;
   height: 50%;
   background-color: #f9f9f9;/* 右侧容器中下面容器的背景颜色 */
   overflow-y: auto;  /* 允许内容滚动 */
+  overflow-x: hidden
 }
 .inner-content{
   font-size: 20px;
   color: #333;/* 右侧容器的字体颜色 */
   line-height: 2.0;
   margin-bottom: 10px;
+  margin-left: 10px;
+  margin-right: 8px;
   text-indent: 2em;  /* 首段空两格 */
   overflow-y: auto;  /* 超过高度时出现滚动条 */
+  overflow-x: hidden
 }
 .title {
   font-size: 36px;/* 右侧容器的标题字体大小 */

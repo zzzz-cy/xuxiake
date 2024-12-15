@@ -2,6 +2,8 @@
   <div id="app">
     <!-- 固定顶部导航栏 -->
     <nav class="navbar">
+      <!-- 添加左侧 logo 图片 -->
+      <img src="./assets/img/logo.png" alt="Logo" class="logo" />
       <ul>
         <li
           v-for="(page, index) in pages"
@@ -48,9 +50,9 @@ export default {
   },
   data() {
     return {
-      pages: ['第一页', '第二页', '第三页', '第四页','第五页'], // 页面名称
+      pages: ['游记路线可视化', '游记情感词统计', '省份游历甘特图', '徐霞客与山水名胜','徐霞客与各色景观'], // 页面名称
       currentPage: 0, // 当前页面索引
-      pageComponents: [PageOne, PageTwo, PageThree, PageFour,PageFive], // 页面组件数组
+      pageComponents: [PageOne, PageTwo, PageThree, PageFour, PageFive], // 页面组件数组
       fullpageInstance: null, // 存储 fullpage.js 实例
     };
   },
@@ -91,10 +93,14 @@ export default {
   background-color: #333;
   color: #fff;
   display: flex;
-  justify-content: center;
+  justify-content: space-between; /* 让 logo 和导航项分开 */
   align-items: center;
-  padding: 10px 0;
+  padding: 10px 20px;
   z-index: 1000;
+}
+
+.navbar .logo {
+  height: 40px; /* 设置 logo 图片的高度 */
 }
 
 .navbar ul {
@@ -103,6 +109,8 @@ export default {
   gap: 20px;
   margin: 0;
   padding: 0;
+  flex-grow: 1; /* 让导航项占据剩余空间 */
+  justify-content: center; /* 在剩余空间内居中对齐 */
 }
 
 .navbar li {
@@ -121,21 +129,39 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  background-color: #e4e0cf; /* 默认背景色 */
+   /* 缩小背景图片，确保完全显示 */
+  
+  background-repeat: no-repeat; /* 防止背景图片重复 */
 }
 
 .section1 {
-  background-color: #ffadad;
+  background-image: url('./assets/img/background.png'); /* 第一页背景 */
+  background-position: left bottom; /* 背景图片靠左下 */
+  background-size: 50%;
 }
 
 .section2 {
-  background-color: #ffd6a5;
+  background-image: url('./assets/img/background.png'); /* 第二页背景 */
+  background-position: left bottom; /* 背景图片靠左下 */
+  background-size: 50%;
 }
 
 .section3 {
-  background-color: #fdffb6;
+  background-image: url('./assets/img/background3.png'); /* 第三页背景 */
+  background-position: right bottom;
+  background-size: 35%;
 }
 
 .section4 {
-  background-color: #caffbf;
+  background-image: url('./assets/img/background.png'); /* 第四页背景 */
+  background-position: left bottom; /* 背景图片靠左下 */
+  background-size: 50%;
+}
+
+.section5 {
+  background-image: url('./assets/img/background.png'); /* 第五页背景 */
+  background-position: left bottom; /* 背景图片靠左下 */
+  background-size: 50%;
 }
 </style>
