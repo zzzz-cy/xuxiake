@@ -16,7 +16,7 @@
     <div class="page-content">
       <!-- 矢量容器 -->
       <div ref="mapContainer" class="map-container">
-        <img src="/images/south.png" alt="南海" class="south-china-sea-image" />
+        <img src="/xuxiake/images/south.png" alt="南海" class="south-china-sea-image" />
       </div>
     </div>
     <!-- 右侧故事容器 -->   
@@ -105,7 +105,7 @@ export default {
        // 加载章节名
     async loadChapters() {
       try {
-        const response = await fetch("/data/chapters.json"); // JSON 文件路径
+        const response = await fetch("/xuxiake/data/chapters.json"); // JSON 文件路径
         const data = await response.json();
         this.chapters = data.chapters;
       } catch (error) {
@@ -140,7 +140,7 @@ export default {
     // 加载地点数据
     async loadLocationData() {
       try {
-        const response = await fetch("/data/dataset_total.json"); // 数据文件路径
+        const response = await fetch("/xuxiake/data/dataset_total.json"); // 数据文件路径
         const data = await response.json();
         // 只提取地名和经纬度
         this.locations = data.map(item => ({
@@ -159,7 +159,7 @@ export default {
     // 加载时间数据
     async loadTimeData() {
       try {
-        const response = await fetch("/data/dataset_time.json"); // 数据文件路径
+        const response = await fetch("/xuxiake/data/dataset_time.json"); // 数据文件路径
         const data = await response.json();
         // 只提取地名和经纬度
         this.timeData = data.map(item => ({
@@ -196,7 +196,7 @@ export default {
     // 绘制地图路径
     async drawMapPath(svg, projection) {
       return new Promise((resolve, reject) => {
-        d3.json("/data/china.geo.json").then(mapData => {
+        d3.json("/xuxiake/data/china.geo.json").then(mapData => {
           const path = d3.geoPath().projection(projection);
           svg.append("g")
             .selectAll("path")
