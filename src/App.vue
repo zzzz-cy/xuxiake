@@ -142,9 +142,9 @@ export default {
 }
 
 .section2 {
-  background-image: url('./assets/img/background.png'); /* 第二页背景 */
-  background-position: left bottom; /* 背景图片靠左下 */
-  background-size: 50%;
+  background-image: url('./assets/img/background3.png'); /* 第三页背景 */
+  background-position: right bottom;
+  background-size: 35%;
 }
 
 .section3 {
