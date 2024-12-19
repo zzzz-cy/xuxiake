@@ -48,11 +48,25 @@
 import { defineComponent } from 'vue';
 import * as echarts from 'echarts/core';
 import * as d3 from 'd3';
-import $ from 'jquery';
 import 'tdesign-vue-next/es/style/index.css';
 //import { MessagePlugin } from 'tdesign-vue-next';
 import '../assets/js/china.js';
 //import chinaMap from '@/assets/json/china.json';
+
+import pro140000 from '@/assets/json/areas_v3/bound/140000_full.json';
+import pro330000 from '@/assets/json/areas_v3/bound/330000_full.json';
+import pro340000 from '@/assets/json/areas_v3/bound/340000_full.json';
+import pro350000 from '@/assets/json/areas_v3/bound/350000_full.json';
+import pro360000 from '@/assets/json/areas_v3/bound/360000_full.json';
+import pro410000 from '@/assets/json/areas_v3/bound/410000_full.json';
+import pro420000 from '@/assets/json/areas_v3/bound/420000_full.json';
+import pro430000 from '@/assets/json/areas_v3/bound/430000_full.json';
+import pro450000 from '@/assets/json/areas_v3/bound/450000_full.json';
+import pro520000 from '@/assets/json/areas_v3/bound/520000_full.json';
+import pro530000 from '@/assets/json/areas_v3/bound/530000_full.json';
+import pro610000 from '@/assets/json/areas_v3/bound/610000_full.json';
+
+
 export default defineComponent({
     name: 'PageFour',
     components: {
@@ -191,7 +205,7 @@ export default defineComponent({
                             type: '天台山',
                         },
                     ],
-                    path: 'https://geo.datav.aliyun.com/areas_v3/bound/330000_full.json',
+                    path: pro330000,
                     legend: [
                         { name: '江郎山', color: '#D0DC89' },
                         { name: '雁荡山', color: '#D0DC89' },
@@ -215,7 +229,7 @@ export default defineComponent({
                             type: '黄山',
                         },
                     ],
-                    path: 'https://geo.datav.aliyun.com/areas_v3/bound/340000_full.json',
+                    path: pro340000,
                     legend: [
                         { name: '白岳山', color: '#D9D9D9' },
                         { name: '黄山', color: '#D0DC89' },
@@ -239,7 +253,7 @@ export default defineComponent({
                             type: '石竹山',
                         },
                     ],
-                    path: 'https://geo.datav.aliyun.com/areas_v3/bound/350000_full.json',
+                    path: pro350000,
                     legend: [
                         { name: '武夷山', color: '#D9D9D9' },
                         { name: '石竹山', color: '#C54522' },
@@ -256,7 +270,7 @@ export default defineComponent({
                             type: '庐山',
                         },
                     ],
-                    path: 'https://geo.datav.aliyun.com/areas_v3/bound/360000_full.json',
+                    path: pro360000,
                     legend: [{ name: '庐山', color: '#D0DC89' }],
                 },
                 {
@@ -270,7 +284,7 @@ export default defineComponent({
                             type: '嵩山',
                         },
                     ],
-                    path: 'https://geo.datav.aliyun.com/areas_v3/bound/410000_full.json',
+                    path: pro410000,
                     legend: [{ name: '嵩山', color: '#E9CB6A' }],
                 },
                 {
@@ -284,7 +298,7 @@ export default defineComponent({
                             type: '华山',
                         },
                     ],
-                    path: 'https://geo.datav.aliyun.com/areas_v3/bound/610000_full.json',
+                    path: pro610000,
                     legend: [{ name: '华山', color: '#594445' }],
                 },
                 {
@@ -298,7 +312,7 @@ export default defineComponent({
                             type: '武当山',
                         },
                     ],
-                    path: 'https://geo.datav.aliyun.com/areas_v3/bound/420000_full.json',
+                    path: pro420000,
                     legend: [{ name: '武当山', color: '#D0DC89' }],
                 },
                 {
@@ -318,7 +332,7 @@ export default defineComponent({
                             type:'恒山',
                         }
                     ],
-                    path: 'https://geo.datav.aliyun.com/areas_v3/bound/140000_full.json',
+                    path: pro140000,
                     legend: [
                         { name: '五台山', color: '#E9CB6A' },
                         { name: '恒山', color: '#E9CB6A' },
@@ -373,7 +387,7 @@ export default defineComponent({
                             type: '石门龙洞',
                         },
                     ],
-                    path: 'https://geo.datav.aliyun.com/areas_v3/bound/430000_full.json',
+                    path: pro430000,
                     legend: [
                         { name: '茶陵州', color: '#594445' },
                         { name: '衡阳城', color: '#E9CB6A' },
@@ -426,7 +440,7 @@ export default defineComponent({
                             type: '佛子山',
                         },
                     ],
-                    path: 'https://geo.datav.aliyun.com/areas_v3/bound/450000_full.json',
+                    path: pro450000,
                     legend: [
                         { name: '炎井温泉', color: '#594445' },
                         { name: '灵渠', color: '#594445' },
@@ -448,7 +462,7 @@ export default defineComponent({
                             type: '白云山',
                         },
                     ],
-                    path: 'https://geo.datav.aliyun.com/areas_v3/bound/520000_full.json',
+                    path: pro520000,
                     legend: [{ name: '白云山', color: '#E9CB6A' }],
                 },
                 {
@@ -474,7 +488,7 @@ export default defineComponent({
                             type: '澜沧江',
                         },
                     ],
-                    path: 'https://geo.datav.aliyun.com/areas_v3/bound/530000_full.json',
+                    path: pro530000,
                     legend: [
                         { name: '鸡足山', color: '#D0DC89' },
                         { name: '黄龙潭', color: '#D0DC89' },
@@ -492,113 +506,89 @@ export default defineComponent({
             var myChart = echarts.init(chartDom);
 
             //var path = province_geo_data[index].path;
-            var option;
             //var _this = this
 
-            myChart.showLoading({
-                text: '加载中...', //加载时候的文本
-                color: '#32846e', //加载时候小圆圈的颜色
-                // textColor:'white',  //加载时候文本颜色
-                maskColor: '#08204200', //加载时候的背景颜色
-            });
+        
 
-            $.get(province_geo_data[index].path, function (usaJson) {
-                // console.log('jquery',usaJson);
-                myChart.hideLoading();
-                echarts.registerMap(province_geo_data[index].name, usaJson);
-                option = {
-                    title: {
-                        text: province_geo_data[index].province,
-                        // subtext: 'Data from www.census.gov',
-                        left: 'center',
+            var localMapData = province_geo_data[index].path; // 假设 path 已经是导入的 JSON 数据
+
+            // 直接注册地图
+            echarts.registerMap(province_geo_data[index].name, localMapData);
+
+            // 设置图表选项
+            var option = {
+                title: {
+                    text: province_geo_data[index].province,
+                    left: 'center',
+                },
+                tooltip: {
+                    show: true,
+                    trigger: 'item',
+                    showDelay: 0,
+                    transitionDuration: 0.2,
+                    formatter: function (params) {
+                        return params.data.name;
+                    },
+                },
+                legend: {
+                    data: province_geo_data[index].legend.map(function (item) {
+                        return {
+                            name: item.name,
+                            itemStyle: {
+                                color: item.color,
+                            },
+                        };
+                    }),
+                    left: 'center',
+                    bottom: 5,
+                },
+                geo: {
+                    map: province_geo_data[index].name,
+                    itemStyle: {
+                        areaColor: {
+                            type: 'linear', // 设置渐变色
+                            x: 0,
+                            y: 0,
+                            x2: 0.5,
+                            y2: 1,
+                            colorStops: [
+                                { offset: 0, color: '#5eb139' },
+                                { offset: 1, color: '#2d8241' },
+                            ],
+                        },
+                        borderColor: '#ffecb2',
+                        borderWidth: 0.5,
                     },
                     tooltip: {
-                        show: true,
-                        trigger: 'item',
-                        showDelay: 0,
-                        transitionDuration: 0.2,
-                        formatter: function (params) {
-                            // console.log('params',params);
-                            // return params.name + ': ' + params.value[2];
-                            return params.data.name;
-                        },
+                        show: false,
                     },
-                    legend: {
-                        data: province_geo_data[index].legend.map(function (
-                            item
-                        ) {
-                            // console.log(item);
-                            return {
-                                name: item.name,
-                                itemStyle: {
-                                    color: item.color,
-                                },
-                            };
-                        }),
-                        left: 'center',
-                        bottom: 5,
-                    },
-                    geo: {
-                        map: province_geo_data[index].name,
+                    emphasis: {
                         itemStyle: {
                             areaColor: {
-                                type: 'linear', // 设置渐变色
+                                type: 'linear',
                                 x: 0,
                                 y: 0,
                                 x2: 0.5,
                                 y2: 1,
                                 colorStops: [
-                                    {
-                                        offset: 0,
-                                        color: '#5eb139', // 起始颜色
-                                    },
-                                    {
-                                        offset: 1,
-                                        color: '#2d8241', // 结束颜色
-                                    },
+                                    { offset: 0, color: '#5eb139' },
+                                    { offset: 1, color: '#2d8241' },
                                 ],
-                            }, // 地图区域的颜色
-                            borderColor: '#ffecb2', // 地图区域的边框颜色
-                            borderWidth: 0.5, // 地图区域的边框宽度
+                            },
+                            borderColor: '#ffecb2',
+                            borderWidth: 0.5,
+                        },
+                        label: {
+                            show: false,
                         },
                         tooltip: {
                             show: false,
                         },
-                        emphasis: {
-                            // 高亮状态下的样式
-                            itemStyle: {
-                                areaColor: {
-                                    type: 'linear', // 设置渐变色
-                                    x: 0,
-                                    y: 0,
-                                    x2: 0.5,
-                                    y2: 1,
-                                    colorStops: [
-                                        {
-                                            offset: 0,
-                                            color: '#5eb139', // 起始颜色
-                                        },
-                                        {
-                                            offset: 1,
-                                            color: '#2d8241', // 结束颜色
-                                        },
-                                    ],
-                                }, // 地图区域的颜色
-                                borderColor: '#ffecb2', // 地图区域的边框颜色
-                                borderWidth: 0.5, // 地图区域的边框宽度
-                            },
-                            label: {
-                                show: false,
-                            },
-                            tooltip: {
-                                show: false,
-                            },
-                        },
                     },
-                    
-                };
-                myChart.setOption(option);
-            });
+                },
+            };
+
+            myChart.setOption(option);
         },
         removeChart() {
             d3.select('#chart').selectAll('*').remove();

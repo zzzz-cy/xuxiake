@@ -90,7 +90,7 @@ export default {
   position: fixed;
   top: 0;
   width: 100%;
-  background-color: #333;
+  background-color: #000000;
   color: #fff;
   display: flex;
   justify-content: space-between; /* 让 logo 和导航项分开 */

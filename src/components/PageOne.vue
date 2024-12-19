@@ -209,10 +209,10 @@ export default {
               d3.select(event.currentTarget).style("fill", "#597b7a");//这里是调地图悬停的颜色(v1:b7ae8f)
               this.createTooltip(svg, d, event);
             })
-            .on("mousemove", (event) => {
-              this.removeTooltip();
-              this.createTooltip(svg, null, event);
-            })
+            // .on("mousemove", (event) => {
+            //   this.removeTooltip();
+            //   this.createTooltip(svg, null, event);
+            // })
             .on("mouseout", (event) => {
               d3.select(event.currentTarget).style("fill", "#8bab8d");//这里是调地图悬停后恢复的颜色(v1:f9f9f9)
               this.removeTooltip();
@@ -414,7 +414,7 @@ export default {
       // 绘制每个时间点下方的圆角矩形
       const rectWidth = 35;  // 设置矩形宽度
       const rectHeight = 90; // 设置矩形高度
-      const offsets = [-73, 98, 12]; // 定义一个数组，存储偏移值
+      const offsets = [-73, 110, 18]; // 定义一个数组，存储偏移值
       lineGroup.selectAll(".timeline-rect")
         .data(this.selectedTimeData)
         .enter()
@@ -669,7 +669,7 @@ export default {
       const timelineHeight = 60;  // 高度设置为固定的 60px
 
       // 设置时间标尺的 y 坐标，使其位于地图下方
-      const timelineYPosition = mapHeight + 20; // 调整时间标尺的位置，放置在地图下方
+      const timelineYPosition = mapHeight + 10; // 调整时间标尺的位置，放置在地图下方
       this.timelineY = timelineYPosition; // 时间轴的 y 坐标
       this.timelineX = timelineWidth;
       // 创建一个时间轴的比例尺
